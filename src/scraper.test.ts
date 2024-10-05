@@ -1,6 +1,8 @@
 import { Scraper } from './scraper';
 
-test('scraper uses request transform when provided', async () => {
+import { testIfCanLogin } from './test-utils';
+
+testIfCanLogin('scraper uses request transform when provided', async () => {
   const scraper = new Scraper({
     transform: {
       // Should throw "TypeError: Only absolute URLs are supported"
@@ -13,25 +15,28 @@ test('scraper uses request transform when provided', async () => {
   );
 });
 
-test('scraper uses response transform when provided', async () => {
-  const scraper = new Scraper({
-    transform: {
-      response: (response) =>
-        new Proxy(response, {
-          get(target, p, receiver) {
-            if (p === 'status') {
-              return 400;
-            }
+testIfCanLogin(
+  'scraper uses response transform when provided',
+  async () => {
+    const scraper = new Scraper({
+      transform: {
+        response: (response) =>
+          new Proxy(response, {
+            get(target, p, receiver) {
+              if (p === 'status') {
+                return 400;
+              }
 
-            if (p === 'ok') {
-              return false;
-            }
+              if (p === 'ok') {
+                return false;
+              }
 
-            return Reflect.get(target, p, receiver);
-          },
-        }),
-    },
-  });
+              return Reflect.get(target, p, receiver);
+            },
+          }),
+      },
+    });
 
-  await expect(scraper.getLatestTweet('twitter')).rejects.toThrowError();
-});
+    await expect(scraper.getLatestTweet('twitter')).rejects.toThrowError();
+  },
+);

@@ -1,8 +1,6 @@
-import { getScraper } from './test-utils';
+import { loggedInScraperTest } from './test-utils';
 
-test('scraper can get profile followers', async () => {
-  const scraper = await getScraper();
-
+loggedInScraperTest('scraper can get profile followers', async (scraper) => {
   const seenProfiles = new Map<string, boolean>();
   const maxProfiles = 50;
   let nProfiles = 0;
@@ -29,9 +27,7 @@ test('scraper can get profile followers', async () => {
   expect(nProfiles).toEqual(maxProfiles);
 });
 
-test('scraper can get profile following', async () => {
-  const scraper = await getScraper();
-
+loggedInScraperTest('scraper can get profile following', async (scraper) => {
   const seenProfiles = new Map<string, boolean>();
   const maxProfiles = 50;
   let nProfiles = 0;

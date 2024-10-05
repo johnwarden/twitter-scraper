@@ -1,6 +1,36 @@
 import { HttpsProxyAgent } from 'https-proxy-agent';
 import { Scraper } from './scraper';
 
+export type scraperTestFunc = (scraper: Scraper) => void;
+
+export const testIfCanLogin = process.env['TWITTER_USERNAME']
+  ? test
+  : test.skip;
+
+export function loggedInScraperTest(
+  testName: string,
+  testFunc: scraperTestFunc,
+  timeout = 10000,
+) {
+  testIfCanLogin(
+    testName,
+    async () => await testFunc(await getScraper()),
+    timeout,
+  );
+}
+
+export function anonymousScraperTest(
+  testName: string,
+  testFunc: scraperTestFunc,
+  timeout = 10000,
+) {
+  test(
+    testName,
+    async () => await testFunc(await getScraper({ authMethod: 'anonymous' })),
+    timeout,
+  );
+}
+
 export interface ScraperTestOptions {
   /**
    * Force the scraper to use username/password to authenticate instead of cookies. Only used

@@ -1,8 +1,6 @@
-import { getScraper } from './test-utils';
+import { getScraper, testIfCanLogin } from './test-utils';
 
-const testLogin = process.env['TWITTER_PASSWORD'] ? test : test.skip;
-
-testLogin(
+testIfCanLogin(
   'scraper can log in',
   async () => {
     const scraper = await getScraper({ authMethod: 'password' });
@@ -11,12 +9,12 @@ testLogin(
   15000,
 );
 
-test('scraper can log in with cookies', async () => {
+testIfCanLogin('scraper can log in with cookies', async () => {
   const scraper = await getScraper();
   await expect(scraper.isLoggedIn()).resolves.toBeTruthy();
 });
 
-test('scraper can restore its login state from cookies', async () => {
+testIfCanLogin('scraper can restore its login state from cookies', async () => {
   const scraper = await getScraper();
   await expect(scraper.isLoggedIn()).resolves.toBeTruthy();
   const scraper2 = await getScraper({ authMethod: 'anonymous' });
@@ -28,7 +26,7 @@ test('scraper can restore its login state from cookies', async () => {
   await expect(scraper2.isLoggedIn()).resolves.toBeTruthy();
 });
 
-testLogin(
+testIfCanLogin(
   'scraper can log out',
   async () => {
     const scraper = await getScraper({ authMethod: 'password' });
